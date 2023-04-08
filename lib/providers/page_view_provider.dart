@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 class PageViewProvider extends ChangeNotifier{
-  int index = 0;
+  String image_url = '';
 
-  increment(int length) async{
-    if(index<=length){
-      index = index+1;
-      print(index);
-      notifyListeners();
-    }
 
+  Future<void> imageUrl(String image) async{
+    image_url=image;
   }
 }
 

@@ -1,14 +1,27 @@
 import 'dart:async';
 
+import 'package:development_status/components/convert_nepali.dart';
+import 'package:development_status/components/fancy%20loader.dart';
+import 'package:development_status/components/tween_animating_bardiagram.dart';
 import 'package:development_status/model/header_model.dart';
+import 'package:development_status/providers/page_view_provider.dart';
+import 'package:development_status/screens/circular_progress_bar.dart';
+import 'package:development_status/screens/vertical_bar_diagram.dart';
 import 'package:development_status/section_heads_screen.dart';
+import 'package:development_status/temp/glass.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:googleapis/sheets/v4.dart' as sheets;
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:ui' as ui;
+import 'dart:html';
+import 'dart:math' as math;
+
+import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -41,11 +54,8 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-
+    _timer = Timer.periodic(Duration(seconds: 50), (Timer timer) {
         _currentPage++;
-
-
       _pageController.animateToPage(
         _currentPage,
         duration: Duration(milliseconds: 350),
@@ -58,14 +68,15 @@ class _HomepageState extends State<Homepage> {
   void dispose() {
     super.dispose();
     _timer.cancel();
+    _pageController.removeListener((){});
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Lalitpur Metropolitan City"),),
       body: FutureBuilder<List<Headers>>(
         future: getData(),
         builder: (context, snapshot){
@@ -76,35 +87,772 @@ class _HomepageState extends State<Homepage> {
               itemBuilder: (BuildContext context, int index) {
                 Headers data = snapshot.data![index];
                 String myString = data.images;
-                List<String> myArray = myString.split(",");
-                print(snapshot.data!.length);
-                print(_currentPage);
-
+                double? physical_progress = double.tryParse(data.progress_physical);
+                double? intangible_progress = double.tryParse(data.progress_intangible);
+                print({data.progress_physical,data.progress_intangible});
+                print({physical_progress,intangible_progress});
+                print(myString);
                 if(_currentPage==snapshot.data!.length-1){
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     // This code will be executed after the build process is complete
                     Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>SectionHeads()));
-
                   });
-
                 }
-                return Container(
-                  color: Colors.blueGrey,
-                  child: Center(
-                    child: Text(snapshot.data![index].name, style: TextStyle(
-                      fontSize: 50
-                    ),),
-                  ),
-                );
+                if(!myString.contains('nan')){
+
+                  print('images');
+                  List<String> myArray = myString.split(",");
+                  bool pro_count = true;
+                  _timer.cancel();
+                  _pageController.removeListener((){});
+                  _timer = Timer.periodic(Duration(seconds: (myArray.length*10)+10), (Timer timer) {
+                    _currentPage++;
+                    _pageController.animateToPage(
+                      _currentPage,
+                      duration: Duration(milliseconds: 1500),
+                      curve: Curves.easeIn,
+                    );
+                  });
+                  print({'My array length',myArray.length});
+                  print(myArray);
+                  return CarouselSlider.builder(
+                    itemCount: myArray.length,
+                    itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex){
+                        if(pro_count){
+                          print(pro_count);
+                          pro_count=false;
+                          Provider.of<PageViewProvider>(context, listen: false).imageUrl(myArray[itemIndex].toString());
+                          return Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                                  Colors.blueAccent.withOpacity(0.8),
+                                  Colors.deepPurple.withOpacity(0.5),
+                                  Colors.blue.withOpacity(0.6),
+                                ])
+                            ),
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: height,
+                              width: width * .9,
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: height*.075,
+                                    child: Center(
+                                      child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: height*.039
+                                      )
+                                     ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: width*9,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: height*.75,
+                                          width: width*.45,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(30),
+                                              gradient: LinearGradient(colors: [
+                                                Colors.white.withOpacity(0.8),
+                                                Colors.white.withOpacity(0.4)
+                                              ])),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ShortTextCard(
+                                                title: "वडा नं:",
+                                                subtitle: data.ward,
+                                                icon: 'ward.png',
+                                                color: Colors.blue,
+                                              ),
+                                              ShortTextCard(
+                                                title: "बिनियोजित बजेट:",
+                                                subtitle: data.planned_budget,
+                                                icon: 'budget.png',
+                                                color: Colors.red,
+                                              ),
+                                              ShortTextCard(
+                                                title: "सम्झौता मिति:",
+                                                subtitle: data.contract_date,
+                                                icon: 'contract.png',
+                                                color: Colors.blue,
+                                              ),
+                                              ShortTextCard(
+                                                title: "सम्पन्न हुने मिति:",
+                                                subtitle: data.completion_date,
+                                                icon: 'finish.png',
+                                                color: Colors.green,
+                                              ),
+                                              FittedBox(
+                                                fit: BoxFit.fitWidth,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(left: width*.015, right: width*.015),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: [
+                                                          Transform.rotate(
+                                                            angle: -math.pi / 4,
+                                                            child: Container(
+                                                              width: width*.04,
+                                                              height: width*.04,
+                                                              padding: EdgeInsets.all(width*.01),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.deepOrange.withOpacity(0.7),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Image.asset('assets/icon/contractor.png', color: Colors.white,),
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: width*.02),
+                                                          Text(
+                                                            'निर्माण व्यवसायीः ',
+                                                            style: GoogleFonts.tiroDevanagariHindi(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: width*.020,
+                                                            )
+
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(left: width*.01),
+                                                        child: FittedBox(
+                                                          fit: BoxFit.fitWidth,
+                                                          child: Text(
+                                                            data.vendor,
+                                                            style: GoogleFonts.tiroDevanagariHindi(
+                                                              color: Colors.black87,
+                                                              fontSize: width*.020,
+                                                          )
+
+                                                          ),
+                                                        ),
+
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          height: height*.8,
+                                          child: Column(
+
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Container(
+                                                height: height*.32,
+                                                width: width*.3,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(30),
+
+                                                  gradient: LinearGradient(
+                                                    colors: [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    Container(
+                                                      padding: EdgeInsets.all(16),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+
+                                                          Row(
+                                                            children: [
+                                                              Transform.rotate(
+                                                                angle: -math.pi / 4,
+                                                                child: Container(
+                                                                  width: 48,
+                                                                  height: 48,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.green.withOpacity(0.5),
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                  ),
+                                                                  child: Image.asset('assets/icon/tangible.png', color: Colors.white),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 18),
+                                                              Text(
+                                                                'भौतिक प्रगती:',
+                                                                style: GoogleFonts.tiroDevanagariHindi(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: width*.020,
+                                                                )
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(height: 8),
+                                                          CircularProgressBar(
+                                                            percentage: physical_progress??0,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.all(16),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+
+                                                          Row(
+                                                            children: [
+                                                              Transform.rotate(
+                                                                angle: -math.pi / 4,
+                                                                child: Container(
+                                                                  width: 48,
+                                                                  height: 48,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.green.withOpacity(0.5),
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                  ),
+                                                                  child: Image.asset('assets/icon/intangible.png', color: Colors.white),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 18),
+                                                              Text(
+                                                                'वित्तीय प्रगती:',
+                                                                style: GoogleFonts.tiroDevanagariHindi(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: width*.020,
+                                                                )
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(height: 8),
+                                                          CircularProgressBar(
+                                                            percentage: intangible_progress??0,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                  height: height*.35,
+                                                  width: width*.3,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(30),
+                                                      gradient: LinearGradient(colors: [
+                                                        Colors.white.withOpacity(0.8),
+                                                        Colors.white.withOpacity(0.4)
+                                                      ])),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          TweenAnimationBarDiagram(barValues: [ double.parse(data.planned_budget)/double.parse(data.planned_budget),
+                                                            double.parse(data.contract_amount)/double.parse(data.planned_budget),
+                                                            ], colors: [Colors.black87,Colors.green],),
+                                                          Container(
+                                                            height: height*.08,
+                                                            padding: EdgeInsets.only(left: width*.015),
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      height: height*.02,
+                                                                      width: height*.02,
+                                                                      color: Colors.black87,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: width*.005,
+                                                                    ),
+                                                                    Text('विनियोजिट बजेट')
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      height: height*.02,
+                                                                      width: height*.02,
+                                                                      color: Colors.green,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: width*.005,
+                                                                    ),
+                                                                    Text('सम्झैता रकम')
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: height*.1,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text('बिनियोजित बजेट:  ',style: GoogleFonts.tiroDevanagariHindi(
+                                                          fontSize: width*.01,
+                                                        )
+                                                          ),
+                                                                Text(convertToNepali(data.planned_budget),style: GoogleFonts.tiroDevanagariHindi(
+                                                                  fontSize: width*.01,
+                                                                    fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Text('सम्झैता रकम:  ',style: GoogleFonts.tiroDevanagariHindi(
+                                                                  fontSize: width*.01,
+                                                                )),
+                                                                Text(convertToNepali(data.contract_amount),style:GoogleFonts.tiroDevanagariHindi(
+                                                                  fontSize: width*.01,
+                                                                    fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ))
+
+                                            ],
+                                          ),
+                                        ),
+
+
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }else{
+
+                          print('boolean for 1st page');
+                          print(pro_count);
+                          print('index of pageview');
+                          print(index);
+                          print(myArray);
+                          print('index of array item');
+                          print(itemIndex);
+                          print(myArray[itemIndex].toString());
+                          Provider.of<PageViewProvider>(context, listen: false).imageUrl(myArray[itemIndex].toString());
+                          String img_src = Provider.of<PageViewProvider>(context, listen: true).image_url;
+                          ui.platformViewRegistry.registerViewFactory(
+                              'hello-html',
+                                  (int viewId) {
+                                return getImage(img_src);
+                              }
+                          );
+                          return Container(
+                              alignment: Alignment.center,
+                              color: Colors.grey,
+                              height: height*.9,
+                              width: width*.8,
+                              child: HtmlElementView(viewType: 'hello-html')
+                          );
+                        }
+                    },
+                    options: CarouselOptions(
+                        autoPlay: true,
+                        viewportFraction: 1,
+                        autoPlayInterval: Duration(seconds: 12)
+                    ),
+                  );
+                }else{
+                  print('no images');
+                  _timer.cancel();
+                  _pageController.removeListener((){});
+                  _timer = Timer.periodic(Duration(seconds: 15), (Timer timer) {
+                    _currentPage++;
+                    _pageController.animateToPage(
+                      _currentPage,
+                      duration: Duration(milliseconds: 350),
+                      curve: Curves.easeIn,
+                    );
+                  });
+                  return Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          Colors.blueAccent.withOpacity(0.8),
+                          Colors.deepPurple.withOpacity(0.5),
+                          Colors.blue.withOpacity(0.6),
+                        ])
+                    ),
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: height,
+                      width: width * .9,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: height*.075,
+                            child: Center(
+                              child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: height*.03
+                              ) ),
+                            ),
+                          ),
+                          Container(
+                            width: width*9,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: height*.75,
+                                  width: width*.45,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      gradient: LinearGradient(colors: [
+                                        Colors.white.withOpacity(0.8),
+                                        Colors.white.withOpacity(0.4)
+                                      ])),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ShortTextCard(
+                                        title: "वडा नं:",
+                                        subtitle: data.ward,
+                                        icon: 'ward.png',
+                                        color: Colors.blue,
+                                      ),
+                                      ShortTextCard(
+                                        title: "बिनियोजित बजेट:",
+                                        subtitle: data.planned_budget,
+                                        icon: 'budget.png',
+                                        color: Colors.red,
+                                      ),
+                                      ShortTextCard(
+                                        title: "सम्झौता मिति:",
+                                        subtitle: data.contract_date,
+                                        icon: 'contract.png',
+                                        color: Colors.blue,
+                                      ),
+                                      ShortTextCard(
+                                        title: "सम्पन्न हुने मिति:",
+                                        subtitle: data.completion_date,
+                                        icon: 'finish.png',
+                                        color: Colors.green,
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Container(
+                                          padding: EdgeInsets.only(left: width*.015, right: width*.015),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Transform.rotate(
+                                                    angle: -math.pi / 4,
+                                                    child: Container(
+                                                      width: width*.04,
+                                                      height: width*.04,
+                                                      padding: EdgeInsets.all(width*.01),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.orangeAccent.withOpacity(0.9),
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
+                                                      child: Image.asset('assets/icon/contractor.png', color: Colors.white,)
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: width*.02),
+                                                  Text(
+                                                    'निर्माण व्यवसायीः ',
+                                                    style: GoogleFonts.tiroDevanagariHindi(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: width*.020,
+                                                    )
+
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(left: width*.01),
+                                                child: FittedBox(
+                                                  fit: BoxFit.fitWidth,
+                                                  child: Text(
+                                                    data.vendor,
+                                                    style: GoogleFonts.tiroDevanagariHindi(
+                                                      color: Colors.black87,
+                                                      fontSize: width*.020,
+                                                    )
+                                                  ),
+                                                ),
+
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: height*.8,
+                                  child: Column(
+
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        height: height*.32,
+                                        width: width*.3,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(30),
+
+                                          gradient: LinearGradient(
+                                            colors: [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(16),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+
+                                                  Row(
+                                                    children: [
+                                                      Transform.rotate(
+                                                        angle: -math.pi / 4,
+                                                        child: Container(
+                                                          width: 48,
+                                                          height: 48,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.green.withOpacity(0.5),
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                          child: Image.asset('assets/icon/tangible.png', color: Colors.white),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 18),
+                                                      Text(
+                                                        'भौतिक प्रगती:',
+                                                        style: GoogleFonts.tiroDevanagariHindi(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: width*.020,
+                                                        )
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  CircularProgressBar(
+                                                    percentage: physical_progress??0,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(16),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+
+                                                  Row(
+                                                    children: [
+                                                      Transform.rotate(
+                                                        angle: -math.pi / 4,
+                                                        child: Container(
+                                                          width: 48,
+                                                          height: 48,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.green.withOpacity(0.5),
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                          child: Image.asset('assets/icon/intangible.png', color: Colors.white),
+
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 18),
+                                                      Text(
+                                                        'वित्तीय प्रगती:',
+                                                        style: GoogleFonts.tiroDevanagariHindi(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: width*.020,
+                                                        )
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  CircularProgressBar(
+                                                    percentage: intangible_progress??0,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                          height: height*.35,
+                                          width: width*.3,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(30),
+                                              gradient: LinearGradient(colors: [
+                                                Colors.white.withOpacity(0.8),
+                                                Colors.white.withOpacity(0.4)
+                                              ])),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  TweenAnimationBarDiagram(barValues: [ double.parse(data.planned_budget)/double.parse(data.planned_budget),
+                                                    double.parse(data.contract_amount)/double.parse(data.planned_budget),
+                                                  ], colors: [Colors.black87,Colors.green],),
+                                                  Container(
+                                                    height: height*.08,
+                                                    padding: EdgeInsets.only(left: width*.015),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              height: height*.02,
+                                                              width: height*.02,
+                                                              color: Colors.black87,
+                                                            ),
+                                                            SizedBox(
+                                                              width: width*.005,
+                                                            ),
+                                                            Text('विनियोजिट बजेट')
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              height: height*.02,
+                                                              width: height*.02,
+                                                              color: Colors.green,
+                                                            ),
+                                                            SizedBox(
+                                                              width: width*.005,
+                                                            ),
+                                                            Text('सम्झैता रकम')
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: height*.1,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text('बिनियोजित बजेट:  ',style: GoogleFonts.tiroDevanagariHindi(
+                                                          fontSize: width*.01,
+                                                        )
+                                                        ),
+                                                        Text(convertToNepali(data.planned_budget),style: GoogleFonts.tiroDevanagariHindi(
+                                                            fontSize: width*.01,
+                                                            fontWeight: FontWeight.bold),),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text('सम्झैता रकम:  ',style: GoogleFonts.tiroDevanagariHindi(
+                                                          fontSize: width*.01,
+                                                        )),
+                                                        Text(convertToNepali(data.contract_amount),style:GoogleFonts.tiroDevanagariHindi(
+                                                            fontSize: width*.01,
+                                                            fontWeight: FontWeight.bold),),
+                                                      ],
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ))
+
+                                    ],
+                                  ),
+                                ),
+
+
+
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
               },
             );
           }else{
-            return Center(child: CircularProgressIndicator());
+            return Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+
+              children: [
+                Text('ललितपुर महानगरपालिका:\nयोजना प्रगति विवरण',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.tiroDevanagariHindi(
+                      fontSize: height*.07,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold
+                  )
+                 ),
+                SizedBox(height: height*.05,),
+                LinearFancyLoader(),
+              ],
+            ));
           }
 
         },
       )
     );
+  }
+  ImageElement getImage(String image){
+    print({'function',Provider.of<PageViewProvider>(context, listen: true).image_url});
+    return ImageElement()..src = "https://drive.google.com/uc?id="+ Provider.of<PageViewProvider>(context, listen: true).image_url;
   }
 }
 Future<List<Headers>> getData() async {
@@ -124,7 +872,7 @@ Future<List<Headers>> getData() async {
     print('No data found.');
   } else {
     print('Data:');
-
+    print(jsonData);
   }
 
   List<Headers> people = (json.decode(jsonData) as List<dynamic>)
@@ -149,3 +897,4 @@ Future<List<Headers>> getData() async {
 
   return people;
 }
+
