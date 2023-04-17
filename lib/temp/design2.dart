@@ -44,7 +44,7 @@ class TextStatWidget extends StatelessWidget {
             children: [
               Text(label.toUpperCase(),
                   style: GoogleFonts.tiroDevanagariHindi(
-                    color: (status) ? Colors.grey : Colors.black87,
+                    color: (status) ? Colors.black87 : Colors.black87,
                     fontSize: height * .022,
                     fontWeight: FontWeight.bold,
                   )),
@@ -60,7 +60,7 @@ class TextStatWidget extends StatelessWidget {
                         maxLines: 3,
                         style: GoogleFonts.tiroDevanagariHindi(
                           color: (status) ? Colors.green : Colors.red,
-                          fontSize: height * .026,
+                          fontSize: height * .03,
                           fontWeight: FontWeight.bold,
                         )),
                   ),

@@ -7,6 +7,7 @@ import 'package:development_status/homepage.dart';
 import 'package:development_status/model/section_head_weekly_tasks.dart';
 import 'package:development_status/temp/design2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
@@ -46,16 +47,26 @@ class _SectionHeadsState extends State<SectionHeads> {
   PageController _pageController = PageController(
     initialPage: 0,
   );
+  late final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
+
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 20), (Timer timer) {
+    _timer = Timer.periodic(Duration(seconds: 30), (Timer timer) {
       _currentPage++;
       _pageController.animateToPage(
         _currentPage,
         duration: Duration(milliseconds: 2000),
         curve: Curves.easeInOutCubicEmphasized,
+      );
+    });
+    Timer.periodic(Duration(seconds: 15), (Timer timer) {
+      print('scroll started');
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 1500),
+        curve: Curves.easeInOut,
       );
     });
   }
@@ -79,7 +90,7 @@ class _SectionHeadsState extends State<SectionHeads> {
             if (snapshot.data!.isNotEmpty) {
               List<HeadTasks> dataArray = snapshot.data!;
               List<HeadTasks> dateFiltered = filterDataByOneWeek(dataArray);
-
+              dateFiltered.sort((a, b) => b.timestamp.compareTo(a.timestamp));
               List<String> uniqueData = [];
 
               for (var data in dateFiltered) {
@@ -87,7 +98,6 @@ class _SectionHeadsState extends State<SectionHeads> {
                   uniqueData.add(data.section);
                 }
               }
-              print(uniqueData);
               return PageView.builder(
                   controller: _pageController,
                   itemCount: uniqueData.length,
@@ -121,7 +131,8 @@ class _SectionHeadsState extends State<SectionHeads> {
                           SizedBox(height: height*.05,),
                           Center(
                             child: Text(
-                              uniqueData[index].toUpperCase(),
+                              uniqueData[index].toUpperCase()+"को  आ.व. २०७९ /८० को \nहाल सम्मको कार्य प्रगती",
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.tiroDevanagariHindi(
                                 color: Colors.black87.withOpacity(0.7),
                                 fontSize: width*.03,
@@ -129,20 +140,23 @@ class _SectionHeadsState extends State<SectionHeads> {
                               )
                             ),
                           ),
-                          SizedBox(height: height*.05,),
+                          SizedBox(height: height*.02,),
                           SizedBox(
-                            height: height*.8,
+                            height: height*.75,
                             width: width*.8,
                             child: ListView.builder(
+                              controller: _scrollController,
                               itemCount: filteredData.length,
                                 itemBuilder: (context,index){
                               return Padding(
                                 padding: EdgeInsets.only(bottom: height*.02),
-                                child: TextStatWidget(
-                                    label: filteredData[index].day,
-                                    value: filteredData[index].workDetails,
-                                    status: (filteredData[index].status=="भएको")?true:false,
-                                    color: Colors.green),
+                                child: FittedBox(
+                                  child: TextStatWidget(
+                                      label: filteredData[index].day,
+                                      value: filteredData[index].workDetails,
+                                      status: (filteredData[index].status=="भएको")?true:false,
+                                      color: Colors.green),
+                                ),
                               );
 
                             }),
@@ -186,7 +200,7 @@ class _SectionHeadsState extends State<SectionHeads> {
                   crossAxisAlignment: CrossAxisAlignment.center,
 
                   children: [
-                    Text('ललितपुर महनगरपालिकाका \n महाशाखा‍/शाखा प्रमुखहरुको \n कार्य विवरण',
+                    Text('ललितपुर महनगरपालिकाका \n महाशाखा‍/शाखा प्रमुखहरुको \n कार्य प्रगती...',
                       textAlign: TextAlign.center,
                       style:  GoogleFonts.tiroDevanagariHindi(
                           fontSize: height*.07,
@@ -227,14 +241,13 @@ Future<List<HeadTasks>> getTaskData() async {
     print('No data found.');
   } else {
     print('Data:');
-    print(jsonData);
   }
 
   List<HeadTasks> people = (json.decode(jsonData) as List<dynamic>)
       .map((json) => HeadTasks(
             timestamp: json["Timestamp"] ?? '',
             section: json["महाशाखा/ शाखा"] ?? '',
-            day: json["हप्ताको दिन"] ?? '',
+            day: json["मिति"] ?? '',
             workDetails: json["कार्य विवरण"] ?? '',
             status: json["कार्य सम्पन्न भए/नभएको"] ?? '',
           ))
@@ -246,7 +259,7 @@ Future<List<HeadTasks>> getTaskData() async {
 List<HeadTasks> filterDataByOneWeek(List<HeadTasks> data) {
   final today = DateTime.now();
   final format = DateFormat('MM/dd/yyyy');
-  final oneWeekAgo = today.subtract(Duration(days: 7));
+  final oneWeekAgo = today.subtract(Duration(days: 365));
 
   final filteredData = data.where((item) {
     // Filter the data if the timestamp is within one week from today

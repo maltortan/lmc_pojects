@@ -45,19 +45,21 @@ class _CircularProgressBarState extends State<CircularProgressBar>
         width: height*.1,
         child: Stack(
           children: [
-            Container(
-              height: 120,
-              width: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey[200],
+            Center(
+              child: Container(
+                height: height*.095,
+                width: height*.095,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[200],
 
+                ),
               ),
             ),
             Center(
               child: Container(
-                height: 95,
-                width: 95,
+                height: height*.08,
+                width: height*.08,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
@@ -70,15 +72,17 @@ class _CircularProgressBarState extends State<CircularProgressBar>
                   ],
                 ),
                 child: Center(
-                  child: Text(
+                  child: FittedBox(
+                    child: Text(
 
-                    "${convertToNepali(widget.percentage.toString())}%",
-                    style: GoogleFonts.tiroDevanagariHindi(
-                        fontWeight: FontWeight.bold,
-                        fontSize: width*.015,
-                      color: Colors.grey[600],
-                    )
+                      "${convertToNepali(widget.percentage.toString())}%",
+                      style: GoogleFonts.tiroDevanagariHindi(
+                          fontWeight: FontWeight.bold,
+                          fontSize: width*.015,
+                        color: Colors.black87,
+                      )
 
+                    ),
                   ),
                 ),
               ),

@@ -136,14 +136,33 @@ class _HomepageState extends State<Homepage> {
                               width: width * .9,
                               child: Column(
                                 children: [
+                                  //Heading
                                   SizedBox(
-                                    height: height*.075,
-                                    child: Center(
-                                      child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: height*.039
-                                      )
-                                     ),
+                                    height: height*.1,
+                                    width: width*.8,
+                                    child: FittedBox(
+                                      child: Center(
+                                        child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: height*.042
+                                        )
+                                       ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height*.05,
+                                    width: width*.8,
+                                    child: FittedBox(
+                                      child: Center(
+                                        child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: height*.032
+                                        )
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Container(
@@ -346,7 +365,9 @@ class _HomepageState extends State<Homepage> {
                                                   ],
                                                 ),
                                               ),
+                                              //Status
                                               Container(
+                                                  padding: EdgeInsets.only(left: width*.02, right: width*.02, top: height*.02),
                                                   height: height*.35,
                                                   width: width*.3,
                                                   decoration: BoxDecoration(
@@ -355,86 +376,21 @@ class _HomepageState extends State<Homepage> {
                                                         Colors.white.withOpacity(0.8),
                                                         Colors.white.withOpacity(0.4)
                                                       ])),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  child: Column(
                                                     children: [
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                        children: [
-                                                          TweenAnimationBarDiagram(barValues: [ double.parse(data.planned_budget)/double.parse(data.planned_budget),
-                                                            double.parse(data.contract_amount)/double.parse(data.planned_budget),
-                                                            ], colors: [Colors.black87,Colors.green],),
-                                                          Container(
-                                                            height: height*.08,
-                                                            padding: EdgeInsets.only(left: width*.015),
-                                                            child: Column(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      height: height*.02,
-                                                                      width: height*.02,
-                                                                      color: Colors.black87,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: width*.005,
-                                                                    ),
-                                                                    Text('विनियोजिट बजेट')
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      height: height*.02,
-                                                                      width: height*.02,
-                                                                      color: Colors.green,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: width*.005,
-                                                                    ),
-                                                                    Text('सम्झैता रकम')
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: height*.1,
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Text('बिनियोजित बजेट:  ',style: GoogleFonts.tiroDevanagariHindi(
-                                                          fontSize: width*.01,
-                                                        )
-                                                          ),
-                                                                Text(convertToNepali(data.planned_budget),style: GoogleFonts.tiroDevanagariHindi(
-                                                                  fontSize: width*.01,
-                                                                    fontWeight: FontWeight.bold),),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                Text('सम्झैता रकम:  ',style: GoogleFonts.tiroDevanagariHindi(
-                                                                  fontSize: width*.01,
-                                                                )),
-                                                                Text(convertToNepali(data.contract_amount),style:GoogleFonts.tiroDevanagariHindi(
-                                                                  fontSize: width*.01,
-                                                                    fontWeight: FontWeight.bold),),
-                                                              ],
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                      )
+                                                      Text('योजनाको हालको स्थिति', style: GoogleFonts.tiroDevanagariHindi(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: width*.020,
+                                                      )),
+                                                      Text(data.plan_status,
+                                                          maxLines: 5,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          textAlign: TextAlign.justify,
+                                                          style: GoogleFonts.tiroDevanagariHindi(
+                                                            fontSize: width*.016,
+                                                          )),
                                                     ],
-                                                  ))
+                                                  ),)
 
                                             ],
                                           ),
@@ -467,12 +423,26 @@ class _HomepageState extends State<Homepage> {
                                 return getImage(img_src);
                               }
                           );
-                          return Container(
-                              alignment: Alignment.center,
-                              color: Colors.grey,
-                              height: height*.9,
-                              width: width*.8,
-                              child: HtmlElementView(viewType: 'hello-html')
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: height*.1,
+                                child: Center(
+                                  child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontSize: height*.05
+                                  ) ),
+                                ),
+                              ),
+                              Container(
+                                  alignment: Alignment.center,
+                                  color: Colors.grey,
+                                  height: height*.9,
+                                  width: width*.8,
+                                  child: HtmlElementView(viewType: 'hello-html')
+                              ),
+                            ],
                           );
                         }
                     },
@@ -509,13 +479,32 @@ class _HomepageState extends State<Homepage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          //Heading
                           SizedBox(
-                            height: height*.075,
-                            child: Center(
-                              child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: height*.03
-                              ) ),
+                            height: height*.1,
+                            width: width*.8,
+                            child: FittedBox(
+                              child: Center(
+                                child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: height*.042
+                                ) ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: height*.05,
+                            width: width*.8,
+                            child: FittedBox(
+                              child: Center(
+                                child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: height*.032
+                                )
+                                ),
+                              ),
                             ),
                           ),
                           Container(
@@ -660,7 +649,7 @@ class _HomepageState extends State<Homepage> {
                                                           child: Image.asset('assets/icon/tangible.png', color: Colors.white),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 18),
+                                                      SizedBox(width: width*.02),
                                                       Text(
                                                         'भौतिक प्रगती:',
                                                         style: GoogleFonts.tiroDevanagariHindi(
@@ -670,7 +659,7 @@ class _HomepageState extends State<Homepage> {
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 8),
+                                                  SizedBox(height: height*.04),
                                                   CircularProgressBar(
                                                     percentage: physical_progress??0,
                                                   ),
@@ -720,94 +709,30 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),
                                       Container(
-                                          height: height*.35,
-                                          width: width*.3,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(30),
-                                              gradient: LinearGradient(colors: [
-                                                Colors.white.withOpacity(0.8),
-                                                Colors.white.withOpacity(0.4)
-                                              ])),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  TweenAnimationBarDiagram(barValues: [ double.parse(data.planned_budget)/double.parse(data.planned_budget),
-                                                    double.parse(data.contract_amount)/double.parse(data.planned_budget),
-                                                  ], colors: [Colors.black87,Colors.green],),
-                                                  Container(
-                                                    height: height*.08,
-                                                    padding: EdgeInsets.only(left: width*.015),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              height: height*.02,
-                                                              width: height*.02,
-                                                              color: Colors.black87,
-                                                            ),
-                                                            SizedBox(
-                                                              width: width*.005,
-                                                            ),
-                                                            Text('विनियोजिट बजेट')
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              height: height*.02,
-                                                              width: height*.02,
-                                                              color: Colors.green,
-                                                            ),
-                                                            SizedBox(
-                                                              width: width*.005,
-                                                            ),
-                                                            Text('सम्झैता रकम')
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: height*.1,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text('बिनियोजित बजेट:  ',style: GoogleFonts.tiroDevanagariHindi(
-                                                          fontSize: width*.01,
-                                                        )
-                                                        ),
-                                                        Text(convertToNepali(data.planned_budget),style: GoogleFonts.tiroDevanagariHindi(
-                                                            fontSize: width*.01,
-                                                            fontWeight: FontWeight.bold),),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Text('सम्झैता रकम:  ',style: GoogleFonts.tiroDevanagariHindi(
-                                                          fontSize: width*.01,
-                                                        )),
-                                                        Text(convertToNepali(data.contract_amount),style:GoogleFonts.tiroDevanagariHindi(
-                                                            fontSize: width*.01,
-                                                            fontWeight: FontWeight.bold),),
-                                                      ],
-                                                    ),
-
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ))
+                                        padding: EdgeInsets.only(left: width*.02, right: width*.02, top: height*.02),
+                                        height: height*.35,
+                                        width: width*.3,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(30),
+                                            gradient: LinearGradient(colors: [
+                                              Colors.white.withOpacity(0.8),
+                                              Colors.white.withOpacity(0.4)
+                                            ])),
+                                        child: Column(
+                                          children: [
+                                            Text('योजनाको हालको स्थिति', style: GoogleFonts.tiroDevanagariHindi(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: width*.020,
+                                            )),
+                                            Text(data.plan_status,
+                                                maxLines: 5,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.justify,
+                                                style: GoogleFonts.tiroDevanagariHindi(
+                                                  fontSize: width*.016,
+                                                )),
+                                          ],
+                                        ),)
 
                                     ],
                                   ),
@@ -860,7 +785,7 @@ Future<List<Headers>> getData() async {
 
   final sheetsApi = sheets.SheetsApi(client);
   final spreadsheetId = '10oIk-DZ45S3qyFHMFEr-D1HolgcKUN3aUTe-IeQAYFg';
-  final range = 'A1:L50'; // Replace with the range of cells you want to retrieve.
+  final range = 'A1:M50'; // Replace with the range of cells you want to retrieve.
 
   final response = await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
   final values = response.values!;
@@ -887,6 +812,7 @@ Future<List<Headers>> getData() async {
     progress_physical: json["कार्य प्रगती भौतिक"]?? '',
     progress_intangible: json["कार्य प्रगती वित्तीय"]?? '',
     plan_status: json["योजनाको हालको स्थिति"]?? '',
+    responsible_person: json["सम्वनधित व्यक्ति"]?? '',
     vendor: json["निर्माण ब्यवसायी"]?? '',
     images: json["images_url"]?? '',
   ))

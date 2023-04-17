@@ -25,7 +25,7 @@ class HeadTasks {
   factory HeadTasks.fromJson(Map<String, dynamic> json) => HeadTasks(
     timestamp: json["Timestamp"]?? '',
     section: json["महाशाखा/ शाखा"]?? '',
-    day: json["हप्ताको दिन"]?? '',
+    day: json["मिति"]?? '',
     workDetails: json["कार्य विवरण"]?? '',
     status: json["कार्य सम्पन्न भए/नभएको"]?? '',
   );
@@ -33,7 +33,7 @@ class HeadTasks {
   Map<String, dynamic> toJson() => {
     "Timestamp": timestamp,
     "महाशाखा/ शाखा": section,
-    "हप्ताको दिन": day,
+    "मिति": day,
     "कार्य विवरण": workDetails,
     "कार्य सम्पन्न भए/नभएको": status,
 

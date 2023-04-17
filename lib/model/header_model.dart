@@ -19,6 +19,7 @@ class Headers {
     required this.progress_intangible,
     required this.plan_status,
     required this.vendor,
+    required this.responsible_person,
     required this.images,
   });
 
@@ -32,6 +33,7 @@ class Headers {
   String progress_physical;
   String progress_intangible;
   String plan_status;
+  String responsible_person;
   String vendor;
   String images;
 
@@ -47,6 +49,7 @@ class Headers {
     progress_intangible: json["कार्य प्रगती वित्तीय"]?? '',
     plan_status: json["योजनाको हालको स्थिति"]?? '',
     vendor: json["निर्माण ब्यवसायी"]?? '',
+    responsible_person: json["सम्वनधित व्यक्ति"]?? '',
     images: json["images_url"]?? '',
   );
 
@@ -62,6 +65,7 @@ class Headers {
     "कार्य प्रगती वित्तीय": progress_intangible,
     "योजनाको हालको स्थिति": plan_status,
     "निर्माण ब्यवसायी": vendor,
+    "सम्वनधित व्यक्ति": responsible_person,
     "images_url": images,
   };
 }
