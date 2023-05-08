@@ -13,7 +13,6 @@ void main() => runApp(
         ChangeNotifierProvider<PageViewProvider>(
           create: (context) => PageViewProvider(),
         ),
-
       ],
       child: MyApp(),
     ));

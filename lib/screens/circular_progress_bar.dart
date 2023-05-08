@@ -41,14 +41,14 @@ class _CircularProgressBarState extends State<CircularProgressBar>
     double width = MediaQuery.of(context).size.width;
     return Center(
       child: SizedBox(
-        height: height*.1,
-        width: height*.1,
+        height: height*.12,
+        width: height*.12,
         child: Stack(
           children: [
             Center(
               child: Container(
-                height: height*.095,
-                width: height*.095,
+                height: height*.15,
+                width: height*.15,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.grey[200],
@@ -58,8 +58,8 @@ class _CircularProgressBarState extends State<CircularProgressBar>
             ),
             Center(
               child: Container(
-                height: height*.08,
-                width: height*.08,
+                height: height*.1,
+                width: height*.1,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
@@ -74,11 +74,10 @@ class _CircularProgressBarState extends State<CircularProgressBar>
                 child: Center(
                   child: FittedBox(
                     child: Text(
-
                       "${convertToNepali(widget.percentage.toString())}%",
                       style: GoogleFonts.tiroDevanagariHindi(
                           fontWeight: FontWeight.bold,
-                          fontSize: width*.015,
+                          fontSize: width*.022,
                         color: Colors.black87,
                       )
 

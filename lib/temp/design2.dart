@@ -59,7 +59,7 @@ class TextStatWidget extends StatelessWidget {
                         softWrap: true,
                         maxLines: 3,
                         style: GoogleFonts.tiroDevanagariHindi(
-                          color: (status) ? Colors.green : Colors.red,
+                          color: (status) ? Colors.black : Colors.black,
                           fontSize: height * .03,
                           fontWeight: FontWeight.bold,
                         )),

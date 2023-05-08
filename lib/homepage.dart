@@ -137,34 +137,60 @@ class _HomepageState extends State<Homepage> {
                               child: Column(
                                 children: [
                                   //Heading
-                                  SizedBox(
-                                    height: height*.1,
-                                    width: width*.8,
-                                    child: FittedBox(
-                                      child: Center(
-                                        child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: height*.042
-                                        )
-                                       ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: width*.02),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      gradient: LinearGradient(
+                                        colors: [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: height*.05,
+                                    height: height*.18,
                                     width: width*.8,
-                                    child: FittedBox(
-                                      child: Center(
-                                        child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: height*.032
-                                        )
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: height*.12,
+                                          child: FittedBox(
+                                            child: Center(
+                                              child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: height*.052
+                                              )
+                                             ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        Container(
+                                          height: height*.05,
+                                          width: width*.8,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Text('Contact Person: ', style: GoogleFonts.tiroDevanagariHindi(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: height*.032
+                                              )),
+                                              Container(
+                                                alignment: Alignment.centerRight,
+                                                child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize: height*.032
+                                                )
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
+
                                   Container(
                                     width: width*9,
                                     child: Row(
@@ -312,12 +338,12 @@ class _HomepageState extends State<Homepage> {
                                                                 'भौतिक प्रगती:',
                                                                 style: GoogleFonts.tiroDevanagariHindi(
                                                                   fontWeight: FontWeight.bold,
-                                                                  fontSize: width*.020,
+                                                                  fontSize: width*.025,
                                                                 )
                                                               ),
                                                             ],
                                                           ),
-                                                          SizedBox(height: 8),
+                                                          SizedBox(height: height*.015),
                                                           CircularProgressBar(
                                                             percentage: physical_progress??0,
                                                           ),
@@ -350,7 +376,7 @@ class _HomepageState extends State<Homepage> {
                                                                 'वित्तीय प्रगती:',
                                                                 style: GoogleFonts.tiroDevanagariHindi(
                                                                   fontWeight: FontWeight.bold,
-                                                                  fontSize: width*.020,
+                                                                  fontSize: width*.025,
                                                                 )
                                                               ),
                                                             ],
@@ -479,34 +505,61 @@ class _HomepageState extends State<Homepage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          //Heading
-                          SizedBox(
-                            height: height*.1,
-                            width: width*.8,
-                            child: FittedBox(
-                              child: Center(
-                                child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: height*.042
-                                ) ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: width*.02),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                colors: [Colors.white.withOpacity(0.8), Colors.white.withOpacity(0.4)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: height*.05,
+                            height: height*.18,
                             width: width*.8,
-                            child: FittedBox(
-                              child: Center(
-                                child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: height*.032
-                                )
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: height*.12,
+                                  child: FittedBox(
+                                    child: Center(
+                                      child: Text(data.name, style: GoogleFonts.tiroDevanagariHindi(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: height*.052
+                                      )
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  height: height*.05,
+                                  width: width*.8,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text('Contact Person: ', style: GoogleFonts.tiroDevanagariHindi(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: height*.032
+                                      )),
+                                      Container(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(data.responsible_person, style: GoogleFonts.tiroDevanagariHindi(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: height*.032
+                                        )
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          //Heading
+
                           Container(
                             width: width*9,
                             child: Row(
@@ -649,17 +702,17 @@ class _HomepageState extends State<Homepage> {
                                                           child: Image.asset('assets/icon/tangible.png', color: Colors.white),
                                                         ),
                                                       ),
-                                                      SizedBox(width: width*.02),
+                                                      SizedBox(width: 18),
                                                       Text(
-                                                        'भौतिक प्रगती:',
-                                                        style: GoogleFonts.tiroDevanagariHindi(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: width*.020,
-                                                        )
+                                                          'भौतिक प्रगती:',
+                                                          style: GoogleFonts.tiroDevanagariHindi(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: width*.025,
+                                                          )
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: height*.04),
+                                                  SizedBox(height: height*.015),
                                                   CircularProgressBar(
                                                     percentage: physical_progress??0,
                                                   ),
@@ -685,16 +738,15 @@ class _HomepageState extends State<Homepage> {
                                                             borderRadius: BorderRadius.circular(10),
                                                           ),
                                                           child: Image.asset('assets/icon/intangible.png', color: Colors.white),
-
                                                         ),
                                                       ),
                                                       SizedBox(width: 18),
                                                       Text(
-                                                        'वित्तीय प्रगती:',
-                                                        style: GoogleFonts.tiroDevanagariHindi(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: width*.020,
-                                                        )
+                                                          'वित्तीय प्रगती:',
+                                                          style: GoogleFonts.tiroDevanagariHindi(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: width*.025,
+                                                          )
                                                       ),
                                                     ],
                                                   ),

@@ -60,7 +60,7 @@ class ShortTextCard extends StatelessWidget {
                   title,
                   style: GoogleFonts.tiroDevanagariHindi(
                     fontWeight: FontWeight.bold,
-                    fontSize: width*.020
+                    fontSize: width*.025
                   )
                 ),
               ],
@@ -71,7 +71,7 @@ class ShortTextCard extends StatelessWidget {
                 convertToNepali(subtitle),
                 style: TextStyle(
                   color: Colors.black87,
-                  fontSize: width*.020,
+                  fontSize: width*.025,
                 ),
               ),
             ),

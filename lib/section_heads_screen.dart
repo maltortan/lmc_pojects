@@ -155,7 +155,7 @@ class _SectionHeadsState extends State<SectionHeads> {
                                       label: filteredData[index].day,
                                       value: filteredData[index].workDetails,
                                       status: (filteredData[index].status=="भएको")?true:false,
-                                      color: Colors.green),
+                                      color: Colors.black),
                                 ),
                               );
 
